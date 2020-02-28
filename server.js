@@ -1,9 +1,5 @@
-const express = require('express');
-const app = express();
+const app = require('./app/config/config')
 const port = 3000;
 
-app.listen(port, function(request, response) {
-
+app.listen(port, function() {
 })
-
-module.exports = app;
