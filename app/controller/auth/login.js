@@ -1,7 +1,9 @@
 const LoginAPI = require('../../dao/LoginDAO')
 
-module.exports = (a, b) => {
-    LoginAPI.getUser({teste: 'name'}).then((data) => {
+module.exports = (req, res) => {
+    res.send('gorila')
+    console.log(req.params.dataUser)
+    LoginAPI.getUserByEmail({teste: 'name'}).then((data) => {
         console.log(data)
     })
 
