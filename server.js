@@ -1,7 +1,6 @@
-const app = require('./app/config/config')
-const port = 3000;
-const mongoDB = require('./app/database');
-const uri = "mongodb://localhost:27017/02"
+const app = require('./app/config/config');
+require('dotenv/config');
+const port = process.env.PORT;
 
 app.listen(port, function() {
 })

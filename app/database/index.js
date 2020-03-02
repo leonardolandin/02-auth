@@ -1,5 +1,7 @@
 const MongoDB = require("mongoose");
-const uri = "mongodb://localhost:27017/02";
+require('dotenv/config');
+
+const uri = process.env.MONGO_DB;
 MongoDB.connect(uri, {
     useNewUrlParser: true,
 });
