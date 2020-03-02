@@ -28,9 +28,6 @@ module.exports = (req, res) => {
             if(dataDAO === null) {
                return ValidationException('Não existe um usuário com esse e-mail', res) 
             }
-            console.log(dataDAO)
-            console.log(dataDAO.email)
-            console.log()
             if(dataUser.user == dataDAO.email && dataUser.pass == dataDAO.password) {
                 res.send('perdemos')
             }
