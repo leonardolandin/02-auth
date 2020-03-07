@@ -36,20 +36,25 @@ module.exports = (req, res) => {
                 const recaptchaVerification = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${dataUser.recaptcha}&remoteip=${req.connection.remoteAddress}`;
                 
                 https.get(recaptchaVerification, (response) => {
-                    let dataRaw;
+                    let dataRaw = '';
                     response.on('data', (dataRawTO) => { dataRaw += dataRawTO })
                     response.on('end', () => {
                         try {
                             let parsedResponse = JSON.parse(dataRaw);
-                            console.log(parsedResponse)
-                            res.send('ola')
+                            if(parsedResponse != null) {
+                                let responseData = {
+                                    user: dataDAO,
+                                    recaptcha: parsedResponse,
+                                    statusCode: 200
+                                }
+                                res.send(responseData)
+                            }
                         } catch (e) {
-                            console.log(e)
                         }
                     })
                 })
-                
-                
+            } else {
+                return ValidationException('Usuário com essas credenciais não existem', res)
             }
         })
 
