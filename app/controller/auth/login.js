@@ -1,5 +1,6 @@
 const LoginDAO = require('../../dao/LoginDAO');
 const https = require('https');
+const jwt = require('jsonwebtoken');
 require('dotenv/config');
 
 module.exports = (req, res) => {
@@ -26,7 +27,7 @@ module.exports = (req, res) => {
         } 
         
         LoginDAO.getUserByEmail(dataUser.user).then((data) => {
-            let dataDAO = data
+            let dataDAO = data;
             if(dataDAO === null) {
                return ValidationException('Não existe um usuário com esse e-mail', res) 
             }
@@ -34,20 +35,27 @@ module.exports = (req, res) => {
             if(dataUser.user == dataDAO.email && dataUser.pass == dataDAO.password && dataUser.recaptcha.length) {
                 const secretKey = process.env.RECAPTCHA_KEY;
                 const recaptchaVerification = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${dataUser.recaptcha}&remoteip=${req.connection.remoteAddress}`;
-                
+                let userID = dataDAO.id;
+
                 https.get(recaptchaVerification, (response) => {
                     let dataRaw = '';
                     response.on('data', (dataRawTO) => { dataRaw += dataRawTO })
                     response.on('end', () => {
                         try {
+                            let userToken = jwt.sign(dataUser, process.env.JWT, {expiresIn: "12h"});
                             let parsedResponse = JSON.parse(dataRaw);
-                            if(parsedResponse != null) {
-                                let responseData = {
-                                    user: dataDAO,
-                                    recaptcha: parsedResponse,
-                                    statusCode: 200
-                                }
-                                res.send(responseData)
+
+                            if(userToken !== null) {
+                                LoginDAO.setNewToken(userID, userToken).then((resp) => {
+                                    if(parsedResponse != null) {
+                                        let responseData = {
+                                            user: dataDAO,
+                                            recaptcha: parsedResponse,
+                                            statusCode: 200
+                                        }
+                                        res.send(responseData)
+                                    }  
+                                })
                             }
                         } catch (e) {
                         }

@@ -7,9 +7,9 @@ MongoDB.connect(uri, {
 });
 const database = MongoDB.connection;
 database.on("error", () => {
-    console.log("> error occurred from the database");
+    console.log("> Erro ao conectar no MongoDB");
 });
 database.once("open", () => {
-    console.log("> successfully opened the database");
+    console.log("> Conexão com MongoDB realizada");
 });
 module.exports = MongoDB;

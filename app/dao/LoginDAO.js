@@ -9,6 +9,16 @@ LoginAPI.getUserByEmail = async function(objCredentials) {
         })
     })
 }
+
+LoginAPI.setNewToken = async function(userId, newToken) {
+    return User.updateOne({_id: userId}, {
+        token: newToken
+    } ,(err, result) => {
+        return new Promise((resolve, reject) => {
+            resolve(result)
+        })
+    })
+}
 module.exports = LoginAPI;
 
 
