@@ -1,4 +1,4 @@
-const LoginDAO = require('../../dao/LoginDAO');
+const AuthDAO = require('../../dao/AuthDAO');
 const https = require('https');
 const jwt = require('jsonwebtoken');
 require('dotenv/config');
@@ -26,7 +26,7 @@ module.exports = (req, res) => {
             return ValidationException('O e-mail inserido não contém um formato de e-mail válido (@)', res)
         } 
         
-        LoginDAO.getUserByEmail(dataUser.user).then((data) => {
+        AuthDAO.getUserByEmail(dataUser.user).then((data) => {
             let dataDAO = data;
             if(dataDAO === null) {
                return ValidationException('Não existe um usuário com esse e-mail', res) 
@@ -46,7 +46,7 @@ module.exports = (req, res) => {
                             let parsedResponse = JSON.parse(dataRaw);
 
                             if(userToken !== null) {
-                                LoginDAO.setNewToken(userID, userToken).then((resp) => {
+                                AuthDAO.setNewToken(userID, userToken).then((resp) => {
                                     if(parsedResponse != null) {
                                         let responseData = {
                                             user: dataDAO,
