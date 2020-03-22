@@ -5,6 +5,6 @@ const register = require('../controller/auth/register')
 
 routes.get('/', home); 
 routes.get('/login/:dataUser', login);
-routes.post('/register', register)
+routes.post('/register/:dataNewUser', register)
 
 module.exports = routes;
