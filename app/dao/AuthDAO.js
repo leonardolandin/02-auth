@@ -1,8 +1,8 @@
 const mongoDB = require('../database');
 const User = require('../model/UserModel')
-const LoginAPI = {}
+const AuthAPI = {}
 
-LoginAPI.getUserByEmail = async function(objCredentials) {
+AuthAPI.getUserByEmail = async function(objCredentials) {
     return User.findOne({'email': objCredentials}, (err, result) => {
         return new Promise((resolve, reject) => {
             resolve(result)
@@ -10,7 +10,7 @@ LoginAPI.getUserByEmail = async function(objCredentials) {
     })
 }
 
-LoginAPI.setNewToken = async function(userId, newToken) {
+AuthAPI.setNewToken = async function(userId, newToken) {
     return User.updateOne({_id: userId}, {
         token: newToken
     } ,(err, result) => {
@@ -19,7 +19,16 @@ LoginAPI.setNewToken = async function(userId, newToken) {
         })
     })
 }
-module.exports = LoginAPI;
+
+AuthAPI.createNewUser = async function(newUserCredentials) {
+    return User.insertMany(newUserCredentials, (err, result) => {
+        return new Promise((resolve, reject) => {
+            resolve(result)
+        })
+    })
+}
+
+module.exports = AuthAPI;
 
 
 
