@@ -1,10 +1,18 @@
 const AuthDAO = require('../../dao/AuthDAO');
 const https = require('https');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 require('dotenv/config');
 
 module.exports = (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
+
+    const decryptPassword = (password) => {
+        const decipher = crypto.createDecipher(process.env.ENCRYPT_ALGORITHM, process.env.ENCRYPT_KEY);
+        decipher.update(password, process.env.ENCRYPT_TYPE);
+        return decipher.final();
+    };
+
     const ValidationException = (message, response) => {
         let sendObject = {
             statusCode: 401,
@@ -31,6 +39,8 @@ module.exports = (req, res) => {
             if(dataDAO === null) {
                return ValidationException('Não existe um usuário com esse e-mail', res) 
             }
+
+            dataDAO.password = decryptPassword(dataDAO.password); 
 
             if(dataUser.user == dataDAO.email && dataUser.pass == dataDAO.password && dataUser.recaptcha.length) {
                 const secretKey = process.env.RECAPTCHA_KEY;

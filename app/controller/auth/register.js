@@ -1,11 +1,18 @@
 const AuthDAO = require('../../dao/AuthDAO');
 const https = require('https');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 require('dotenv/config');
 
 
 module.exports = (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
+    
+    const encryptPassword = (password) => {
+        const cipher = crypto.createCipher(process.env.ENCRYPT_ALGORITHM, process.env.ENCRYPT_KEY);
+        cipher.update(password);
+        return cipher.final(process.env.ENCRYPT_TYPE);
+    };
 
     const ValidateCredentials = (objUser) => {
         if(objUser && objUser.email && objUser.email.length > 254) {
@@ -61,6 +68,8 @@ module.exports = (req, res) => {
                             if(userToken !== null && parsedResponse !== null) {
                                 let dateNow = new Date();
                                 dateNow.setSeconds(0, 0);
+                                dataUser.password = encryptPassword(dataUser.password);
+                                dataUser.passwordConfirmed = encryptPassword(dataUser.passwordConfirmed);
 
                                 dataUser.token = userToken;
                                 dataUser.active = true;
